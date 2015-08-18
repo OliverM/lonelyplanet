@@ -1,6 +1,8 @@
 (ns lonelyplanet.core
-  (:require [clojure.tools.cli :refer [parse-opts]]
-            [clojure.string :as s])
+  (:require [clojure.tools.cli :as cli]
+            [clojure.string :as s]
+            [clojure.java.io :as io]
+            )
   (:gen-class))
 
 (def cli-options [["-h" "--help" "Show this help message."]
@@ -34,15 +36,31 @@
   (println msg)
   (System/exit status))
 
+(defn gen-reader
+  "Convert a filename into a file reader ready for processing. Filename can be presented in parent-child fragments,
+   or as a single path."
+  [& paths]
+  (->> paths (apply io/file) io/input-stream io/reader))
+
+(defn process-files [{:keys [taxonomy destinations output-dir]}]
+  )
+
+(defn validate-invocation
+  "Check invocation arguments, options etc for valid invocation"
+  [{:keys [options arguments errors summary]}]
+  (cond (:help options) (exit 0 (usage summary))
+        (not= (count arguments) 2) (exit 1 (usage summary))
+        errors (exit 1 (error-msg errors))))
+
 (defn -main
   "Parse commandline options & arguments, & respond accordingly. Main entry point."
   [& args]
-  (let [{:keys [options arguments errors summary]} (parse-opts args cli-options)]
+  (let [{:keys [options arguments errors summary] :as invocation} (cli/parse-opts args cli-options)]
+    (validate-invocation invocation)
 
-    ;; check everything we've been told to do is kosher
-    (cond (:help options) (exit 0 (usage summary))
-          (not= (count arguments) 2) (exit 1 (usage summary))
-          errors (exit 1 (error-msg errors)))
+    (let [taxonomy (gen-reader (first arguments) (:taxonomy options))
+          destinations (gen-reader (first arguments) (:destinations options))
+          output (io/file (second arguments) "output.xml")]
 
-    ;; let's get cracking, so
-    ))
+      (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
+      (exit 0 (str "Files processed & saved to " output)))))

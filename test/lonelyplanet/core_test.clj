@@ -2,9 +2,14 @@
   (:require [clojure.test :refer :all]
             [lonelyplanet.core :refer :all]
 
-            [clojure.tools.cli :refer [parse-opts]]
+            [clojure.tools.cli :as cli]
             [clojure.string :as s]
             [aprint.core :refer (aprint)]))
+
+(defn parse-util
+  "Utility testing function generating pipeline for supplied cli-options seq"
+  [args]
+  (->> (cli/parse-opts args cli-options) validate-invocation))
 
 (defn cli-test-fixture
   [f]
@@ -19,15 +24,15 @@
   (testing "Exit fn mocked out."
     (is (= (exit 1 "test") {:status 1 :msg "test"})))
   (testing "Usage generates expected text"
-    (is (string? (re-find #"search-string" (usage "search-string")))))
+    (is (= "search-string" (->> (usage "search-string")
+                                (re-find #"search-string")))))
   (testing "Help option returns correct exit code."
-    (is (= 0 (:status (-main "-h")))))
+    (is (= 0 (:status (parse-util ["-h"])))))
   (testing "Help options returns correct help text."
-    (is (string? (re-find #"taxonomy" (:msg (-main "-h"))))))
+    (is ("taxonomy" (re-find #"taxonomy" (:msg (parse-util ["-h"]))))))
   (testing "Unknown option generates error status code"
-    (is (not= 0 (:status (-main "j")))))
+    (is (not= 0 (:status (parse-util ["-j"])))))
   (testing "Wrong number of arguments caught"
-    (is (not= 0 (:status (-main "arg1" "arg2" "spurious-arg")))))
-  (testing "Alternative filenames for input files accepted" ;; this test is passing in practice...
-    (is (= 0 (:status (-main "-t" "tax.txt" "--destinations" "dest.txt" "arg1" "arg2")))))
-  )
+    (is (not= 0 (:status (parse-util ["arg1" "arg2" "spurious-arg"])))))
+  (testing "Alternative filenames for input files accepted" ;; nil as correct invocation so no exit generated
+    (is (= nil (:status (parse-util ["-t" "tax.txt" "--destinations" "dest.txt" "arg1" "arg2"]))))))
