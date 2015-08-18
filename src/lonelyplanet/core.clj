@@ -2,6 +2,8 @@
   (:require [clojure.tools.cli :as cli]
             [clojure.string :as s]
             [clojure.java.io :as io]
+
+            [lonelyplanet.model :as m]
             )
   (:gen-class))
 
@@ -43,6 +45,7 @@
   (->> paths (apply io/file) io/input-stream io/reader))
 
 (defn process-files [{:keys [taxonomy destinations output-dir]}]
+  ;(m/gen-parser taxonomy)
   )
 
 (defn validate-invocation
@@ -58,9 +61,9 @@
   (let [{:keys [options arguments errors summary] :as invocation} (cli/parse-opts args cli-options)]
     (validate-invocation invocation)
 
-    (let [taxonomy (gen-reader (first arguments) (:taxonomy options))
-          destinations (gen-reader (first arguments) (:destinations options))
-          output (io/file (second arguments) "output.xml")]
+    (with-open [taxonomy (gen-reader (first arguments) (:taxonomy options))
+                destinations (gen-reader (first arguments) (:destinations options))
+                output (io/file (second arguments) "output.xml")]
 
       (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
       (exit 0 (str "Files processed & saved to " output)))))
