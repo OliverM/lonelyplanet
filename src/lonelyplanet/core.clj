@@ -61,9 +61,10 @@
   (let [{:keys [options arguments errors summary] :as invocation} (cli/parse-opts args cli-options)]
     (validate-invocation invocation)
 
-    (with-open [taxonomy (gen-reader (first arguments) (:taxonomy options))
-                destinations (gen-reader (first arguments) (:destinations options))
-                output (io/file (second arguments) "output.xml")]
+    (try (with-open [taxonomy (gen-reader (first arguments) (:taxonomy options))
+                     destinations (gen-reader (first arguments) (:destinations options))
+                     output (io/file (second arguments) "output.xml")]
 
-      (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
-      (exit 0 (str "Files processed & saved to " output)))))
+           (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
+           (exit 0 (str "Files processed & saved to " output)))
+         (catch Exception e (exit 1 (str "Exception: " (.getMessage e)))))))
