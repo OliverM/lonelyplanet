@@ -39,3 +39,7 @@
               z/up                                          ;; up to node
               hierarchy)})
 
+(defn destination-by-id
+  "Find a destination node by id from the destinations zipper"
+  [dest-id destinations]
+  (zx/xml1-> destinations :destination (zx/attr= :atlas_id dest-id) z/node))
