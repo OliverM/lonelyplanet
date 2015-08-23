@@ -9,7 +9,9 @@
   [src]
   (x/parse src))
 
-(defn leaves [loc]
+(defn leaves
+  "Transform tree zipper to sequence of leaves"
+  [loc]
   (filter (complement z/branch?) (take-while (complement z/end?) (iterate z/next loc))))
 
 (defn hierarchy
@@ -36,3 +38,4 @@
               z/up                                          ;; up to node-name
               z/up                                          ;; up to node
               hierarchy)})
+
