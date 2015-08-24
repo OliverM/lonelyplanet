@@ -13,7 +13,9 @@
                      gen-parser
                      z/xml-zip)
         leaves (leaves test-zip)
-        sa (location-meta (nth leaves 2))]
+        sa (location-meta (nth leaves 2))
+        destination-metas (location-metas leaves)
+        ]
     (testing "Leaf nodes count matches no. of leaf nodes in test taxonomy"
       (is (= (count leaves) 25)))
     (testing "Leaf nodes are nil or strings"
@@ -21,16 +23,15 @@
                (or (string? leaf) (nil? leaf)))
              true)))
     (testing "Parsing location information"
-      (is (= (:placename sa) "South Africa"))
-      (is (= (:place-id sa) "355611"))
-      (is (= (:route sa) '("355611" "355064" nil nil))))))
+      (is (= 355611 (first sa)))
+      (is (= (:placename (second sa)) "South Africa"))
+      (is (= (:place-id (second sa)) "355611"))
+      (is (= (:route (second sa)) '("355611" "355064" nil nil))))
+    (testing "Destination metadata lookup structure returns expected location metadata"
+      (is (= (destination-metas 355611) (second sa))))))
 
-(deftest find-destination
-  (let [test-zip (-> (gen-reader "resources/test" "destinations.xml")
-                     gen-parser
-                     z/xml-zip)]
-    (testing "Find destination by supplied id"
-      (is (= (-> (destination-by-id "355611" test-zip)
-                 :attrs
-                 :title)
-             "South Africa")))))
+(deftest generate-destinations-data
+  (let [destinations (generate-destinations
+                       (gen-reader "resources/test" "taxonomy.xml")
+                       (gen-reader "resources/test" "destinations.xml"))]
+    (= (count destinations) 25)))
