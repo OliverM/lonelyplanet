@@ -6,7 +6,9 @@
             [clojure.zip :as z]
             [clojure.data.xml :as x]
             [clojure.data.zip :as dz]
-            [clojure.data.zip.xml :as zx]))
+            [clojure.data.zip.xml :as zx]
+
+            [aprint.core :refer [aprint]]))
 
 (deftest parse-taxonomy
   (let [test-zip (-> (gen-reader "resources/test" "taxonomy.xml")
@@ -34,4 +36,13 @@
   (let [destinations (generate-destinations
                        (gen-reader "resources/test" "taxonomy.xml")
                        (gen-reader "resources/test" "destinations.xml"))]
-    (= (count destinations) 25)))
+    (testing "Expected number of destinations parsed"
+      (is (= (count destinations) 24)))))                   ;; excludes 'World' found in taxonomy.xml
+
+(deftest destination-ordering
+  (let [destination-ids (->> (gen-reader "resources/test" "destinations.xml")
+                             gen-parser
+                             :content
+                             (map (comp #(Integer. ^String %) :atlas_id :attrs)))]
+    (testing "Assumption of continually-increasing :atlas_id codes in destinations.xml"
+      (is (= (apply < destination-ids) true)))))
