@@ -46,3 +46,16 @@
                              (map (comp #(Integer. ^String %) :atlas_id :attrs)))]
     (testing "Assumption of continually-increasing :atlas_id codes in destinations.xml"
       (is (= (apply < destination-ids) true)))))
+
+(deftest destination-count
+  (let [taxonomy-count (-> (gen-reader "resources/test" "taxonomy.xml")
+                           gen-parser
+                           z/xml-zip
+                           leaves
+                           count)
+        destinations-count (-> (gen-reader "resources/test" "destinations.xml")
+                               gen-parser
+                               :content
+                               count)]
+    (testing "One extra destination in taxonomy vs destinations as it includes notional 'World' entry"
+      (is (= 1 (- taxonomy-count destinations-count))))))
