@@ -44,3 +44,8 @@
                                                              #(gen-hierarchy-step % taxonomy)
                                                              (get-in destination [:meta :route]))]))
              [:div#main :div.inner] (content (gen-content destination)))
+
+(defn render-destination
+  "Generate a string of HTML from a supplied destination dataset and metadata taxonomy structure"
+  [dest dest-metas]
+  (apply str (destination dest dest-metas)))

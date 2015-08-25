@@ -56,6 +56,7 @@
   [taxonomy destinations]
   (let [dest-metas (-> taxonomy gen-parser z/xml-zip leaves location-metas)
         destinations (-> destinations gen-parser :content)]
-    (for [destination destinations]
-      (let [destination-id (-> destination :attrs :atlas_id)]
-        (assoc destination :meta (dest-metas (Integer. ^String destination-id)))))))
+    {:destinations (for [destination destinations]
+                     (let [destination-id (-> destination :attrs :atlas_id)]
+                       (assoc destination :meta (dest-metas (Integer. ^String destination-id)))))
+     :dest-metas dest-metas}))

@@ -37,7 +37,7 @@
                        (gen-reader "resources/test" "taxonomy.xml")
                        (gen-reader "resources/test" "destinations.xml"))]
     (testing "Expected number of destinations parsed"
-      (is (= (count destinations) 24)))))                   ;; excludes 'World' found in taxonomy.xml
+      (is (= (count (:destinations destinations)) 24)))))                   ;; excludes 'World' found in taxonomy.xml
 
 (deftest destination-ordering
   (let [destination-ids (->> (gen-reader "resources/test" "destinations.xml")

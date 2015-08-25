@@ -4,6 +4,7 @@
             [clojure.java.io :as io]
 
             [lonelyplanet.model :as m]
+            [lonelyplanet.view :as v]
             )
   (:gen-class))
 
@@ -44,9 +45,13 @@
   [& paths]
   (->> paths (apply io/file) io/input-stream io/reader))
 
-(defn process-files [{:keys [taxonomy destinations output-dir]}]
-  ;(m/gen-parser taxonomy)
-  )
+(defn process-files
+  "Generate the HTML files from the supplied taxonomy and destinations files, saving them to the output directory."
+  [{:keys [taxonomy destinations output-dir]}]
+  (let [{:keys [destinations dest-metas]} (m/generate-destinations taxonomy destinations)]
+    (doseq [destination destinations]
+      (let [output-file (io/file output-dir (str (get-in destination [:meta :place-id]) ".html"))]
+        (spit output-file (v/render-destination destination dest-metas))))))
 
 (defn validate-invocation
   "Check invocation arguments, options etc for valid invocation"
@@ -60,11 +65,11 @@
   [& args]
   (let [{:keys [options arguments errors summary] :as invocation} (cli/parse-opts args cli-options)]
     (validate-invocation invocation)
-
     (try (with-open [taxonomy (gen-reader (first arguments) (:taxonomy options))
                      destinations (gen-reader (first arguments) (:destinations options))
-                     output (io/file (second arguments) "output.xml")]
-
-           (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
-           (exit 0 (str "Files processed & saved to " output)))
-         (catch Exception e (exit 1 (str "Exception: " (.getMessage e)))))))
+                     ]
+           (let [output (second arguments)]
+             (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
+             (exit 0 (str "Files processed & saved to " output))))
+         (catch Exception e (exit 1 (str "Exception: " (.getMessage e))))
+         )))
