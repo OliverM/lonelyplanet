@@ -44,7 +44,7 @@
                              gen-parser
                              :content
                              (map (comp #(Integer. ^String %) :atlas_id :attrs)))]
-    (testing "Assumption of continually-increasing :atlas_id codes in destinations.xml"
+    (testing "Assumption of unique & continually-increasing :atlas_id codes in destinations.xml"
       (is (= (apply < destination-ids) true)))))
 
 (deftest destination-count

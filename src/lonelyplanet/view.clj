@@ -30,7 +30,7 @@
 (defn gen-content
   "Convert destination data (supplied as a lazy xml parser) into the main HTML content for the destination page."
   [destination]
-  (let [destination (-> destination z/xml-zip z/down)
+  (let [destination (-> destination z/xml-zip z/down)       ;; z/down unwraps <destination> tag
         fragment-locs (take-while (complement z/end?) (iterate z/next destination))]
     (html (map (fn [loc]
                  (list (when (z/down loc) [(level-header (depth loc)) (-> loc z/node :tag name make-title)])
