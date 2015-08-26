@@ -39,7 +39,13 @@
 
 (deftemplate destination blank [destination taxonomy]
              [:div#header :h1] (content (get-in destination [:meta :placename]))
-             [:div.secondary-navigation :a] (content (get-in destination [:meta :placename]))
+
+             ;; breadcrumb navigation
+             [:div.secondary-navigation :ul] (content (map #(gen-hierarchy-step % taxonomy)
+                                                       (get-in destination [:meta :route])))
+             [:div.secondary-navigation [:li first-of-type]] (add-class "first")
+
+
              [:div#sidebar :div.inner] (content (html [:ul (map
                                                              #(gen-hierarchy-step % taxonomy)
                                                              (get-in destination [:meta :route]))]))
