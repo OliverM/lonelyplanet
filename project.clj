@@ -9,6 +9,7 @@
                  [org.clojure/data.zip "0.1.1"] ;; XML as zippers
                  [org.clojure/tools.cli "0.3.2"] ;; command line opt parsing
                  [enlive "1.1.6"] ;; HTML generation
+                 [criterium "0.4.3"] ;; benchmarking
                  ]
   :main ^:skip-aot lonelyplanet.core
   :target-path "target/%s"

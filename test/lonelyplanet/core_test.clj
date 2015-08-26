@@ -4,6 +4,7 @@
 
             [clojure.tools.cli :as cli]
             [clojure.string :as s]
+            [criterium.core :as c]
             [aprint.core :refer (aprint)]))
 
 (defn parse-util
