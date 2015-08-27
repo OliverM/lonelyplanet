@@ -60,3 +60,30 @@
                      (let [destination-id (-> destination :attrs :atlas_id)]
                        (assoc destination :meta (dest-metas (Integer. ^String destination-id)))))
      :dest-metas dest-metas}))
+
+(defn walk&transform-zipper
+  "Walk a zipper, mutating with f & walking the returned, mutated version"
+  [loc f]
+  (if (z/end? loc)
+    loc
+    (recur (z/next (f loc)) f)))
+
+(defn to-html-list
+  "Convert a taxonomy node loc to a html list. When it encounters a :node element, change the :tag of the element to
+  :ul, and add a child :li node containing a :a node with a :href attribute to the destination"
+  [loc]
+  (let [link-text (-> loc z/children first :content)
+        link (-> loc z/node (get-in [:attrs :geo_id]))
+        link (str link ".html")]
+    (-> (z/edit loc assoc :tag :ul)
+        (z/append-child (x/->Element :li {} (x/->Element :a {:href link} link-text))))))
+
+(defn transform-taxonomy-nodes
+  "Transform a taxonomy zipper from the xml tag-based structure to an enlive-html tag-based structure suitable
+  for rendering to HTML by enlive. Assumes it's operating from a root node tag, not the root <taxonomies> tag."
+  [loc]
+  (if (= (-> loc z/node :tag) :node) (to-html-list loc) loc))
+
+(defn prune-taxonomy-nodes
+  [loc]
+  (if (#{:ul :li} (-> loc z/node :tag)) loc (z/remove loc)))
