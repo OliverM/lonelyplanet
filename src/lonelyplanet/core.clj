@@ -51,7 +51,7 @@
   (let [{:keys [destinations dest-metas hierarchy]} (m/generate-destinations taxonomy destinations)]
     (doseq [destination destinations]
       (let [output-file (io/file output-dir (str (get-in destination [:meta :place-id]) ".html"))]
-        (spit output-file (v/render-destination destination dest-metas))))))
+        (spit output-file (v/render-destination destination dest-metas hierarchy))))))
 
 (defn validate-invocation
   "Check invocation arguments, options etc for valid invocation"

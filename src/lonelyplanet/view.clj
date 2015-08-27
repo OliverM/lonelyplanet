@@ -37,7 +37,7 @@
                        (when (not (z/down loc)) [:p (-> loc z/node)])))
                fragment-locs))))
 
-(deftemplate destination blank [destination taxonomy]
+(deftemplate destination blank [destination taxonomy hierarchy]
              [:div#header :h1] (content (get-in destination [:meta :placename]))
 
              ;; breadcrumb navigation
@@ -46,12 +46,10 @@
              [:div.secondary-navigation [:li first-of-type]] (add-class "first")
 
 
-             [:div#sidebar :div.inner] (content (html [:ul (map
-                                                             #(gen-breadcrumb-step % taxonomy)
-                                                             (get-in destination [:meta :route]))]))
+             [:div#sidebar :div.inner] (content hierarchy)
              [:div#main :div.inner] (content (gen-content destination)))
 
 (defn render-destination
   "Generate a string of HTML from a supplied destination dataset and metadata taxonomy structure"
-  [dest dest-metas]
-  (apply str (destination dest dest-metas)))
+  [dest dest-metas hierarchy]
+  (apply str (destination dest dest-metas hierarchy)))

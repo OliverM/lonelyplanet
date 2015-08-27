@@ -50,22 +50,6 @@
   [taxonomy-locs]
   (into (sorted-map) (map location-meta taxonomy-locs)))
 
-(defn generate-destinations
-  "Given file readers of the taxonomy and the destination xml files, generate a combined structure holding data from
-  both, suitable for rendering."
-  [taxonomy destinations]
-  (let [tax-zip (-> taxonomy gen-parser z/xml-zip)
-        hierarchy (-> tax-zip z/next z/next (walk&transform-zipper transform-taxonomy-nodes)
-                      z/root z/xml-zip z/next z/next (walk&transform-zipper prune-taxonomy-nodes)
-                      z/root)
-        dest-metas (-> tax-zip leaves location-metas)
-        destinations (-> destinations gen-parser :content)]
-    {:destinations (for [destination destinations]
-                     (let [destination-id (-> destination :attrs :atlas_id)]
-                       (assoc destination :meta (dest-metas (Integer. ^String destination-id)))))
-     :dest-metas dest-metas
-     :hierarchy hierarchy}))
-
 (defn walk&transform-zipper
   "Walk a zipper, mutating with f & walking the returned, mutated version"
   [loc f]
@@ -97,3 +81,19 @@
           (string? (-> loc z/node)))
     loc
     (z/remove loc)))
+
+(defn generate-destinations
+  "Given file readers of the taxonomy and the destination xml files, generate a combined structure holding data from
+  both, suitable for rendering."
+  [taxonomy destinations]
+  (let [tax-zip (-> taxonomy gen-parser z/xml-zip)
+        hierarchy (-> tax-zip z/next z/next (walk&transform-zipper transform-taxonomy-nodes)
+                      z/root z/xml-zip z/next z/next (walk&transform-zipper prune-taxonomy-nodes)
+                      z/root z/xml-zip z/next z/next z/node) ;; navigate to root :ul element
+        dest-metas (-> tax-zip leaves location-metas)
+        destinations (-> destinations gen-parser :content)]
+    {:destinations (for [destination destinations]
+                     (let [destination-id (-> destination :attrs :atlas_id)]
+                       (assoc destination :meta (dest-metas (Integer. ^String destination-id)))))
+     :dest-metas dest-metas
+     :hierarchy hierarchy}))
