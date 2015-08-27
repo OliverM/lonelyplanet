@@ -76,7 +76,8 @@
         link (-> loc z/node (get-in [:attrs :geo_id]))
         link (str link ".html")]
     (-> (z/edit loc assoc :tag :ul)
-        (z/append-child (x/->Element :li {} (x/->Element :a {:href link} link-text))))))
+        (z/append-child (x/map->Element {:tag     :li :attrs {}
+                                         :content [(x/map->Element {:tag :a :attrs {:href link} :content link-text})]})))))
 
 (defn transform-taxonomy-nodes
   "Transform a taxonomy zipper from the xml tag-based structure to an enlive-html tag-based structure suitable
@@ -85,5 +86,9 @@
   (if (= (-> loc z/node :tag) :node) (to-html-list loc) loc))
 
 (defn prune-taxonomy-nodes
+  "Remove nodes not in the set of :ul, :li or :a element types, or is a string."
   [loc]
-  (if (#{:ul :li} (-> loc z/node :tag)) loc (z/remove loc)))
+  (if (or (#{:ul :li :a nil} (-> loc z/node :tag))
+          (string? (-> loc z/node)))
+    loc
+    (z/remove loc)))

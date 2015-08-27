@@ -32,6 +32,54 @@
     (testing "Destination metadata lookup structure returns expected location metadata"
       (is (= (destination-metas 355611) (second sa))))))
 
+(deftest transform-taxonomy
+  (let [test-zip (-> (gen-reader "resources/test" "taxonomy.xml")
+                     gen-parser
+                     z/xml-zip)
+        leaf-node-count (count (zx/xml-> test-zip :taxonomy :node leaves))
+        test-node (z/node (nth (take-while (complement z/end?) (iterate z/next test-zip)) 13))]
+    (testing "Identity transform of walker function leaves structure unchanged"
+      (is (= (z/node (walk&transform-zipper test-zip identity)) (z/node test-zip))))
+    (testing "Pruning taxonomy zipper before adding html tags leaves minimal structure"
+      (is (= (z/node (walk&transform-zipper (-> test-zip z/next z/next) prune-taxonomy-nodes))
+             #clojure.data.xml.Element{:tag :taxonomies, :attrs {},
+                                       :content [#clojure.data.xml.Element{:tag :taxonomy, :attrs {},
+                                                                           :content nil}]})))
+    (testing "Transforming but not pruning taxonomy doubles of leaves from node_names"
+      (is (= (+ 1 (* 2 leaf-node-count))
+             (count (leaves (-> test-zip z/next z/next
+                                (walk&transform-zipper transform-taxonomy-nodes)
+                                z/root
+                                z/xml-zip))))))
+    (testing "Transformation of taxonomy node gives expected augmented structure"
+      (is (= (-> (z/xml-zip test-node)
+                 (walk&transform-zipper transform-taxonomy-nodes)
+                 z/node)
+             #clojure.data.xml.Element{:tag     :ul,
+                                       :attrs   {:atlas_node_id "355613", :ethyl_content_object_id "", :geo_id "355613"},
+                                       :content [#clojure.data.xml.Element{:tag     :node_name,
+                                                                           :attrs   {},
+                                                                           :content ("Table Mountain National Park")}
+                                                 #clojure.data.xml.Element{:tag     :li,
+                                                                           :attrs   {},
+                                                                           :content [#clojure.data.xml.Element{:tag     :a,
+                                                                                                               :attrs   {:href "355613.html"},
+                                                                                                               :content ("Table Mountain National Park")}]}]})))
+    (testing "Transforming then pruning sample taxomony node gives expected structure"
+      (is (= (-> (z/xml-zip test-node)
+                 (walk&transform-zipper transform-taxonomy-nodes)
+                 z/root z/xml-zip
+                 (walk&transform-zipper prune-taxonomy-nodes)
+                 z/node)
+             #clojure.data.xml.Element{:tag :ul,
+                                       :attrs {:atlas_node_id "355613", :ethyl_content_object_id "", :geo_id "355613"},
+                                       :content [#clojure.data.xml.Element{:tag :li,
+                                                                           :attrs {},
+                                                                           :content [#clojure.data.xml.Element{:tag :a,
+                                                                                                               :attrs {:href "355613.html"},
+                                                                                                               :content ("Table Mountain National Park")}]}]}
+             )))))
+
 (deftest generate-destinations-data
   (let [destinations (generate-destinations
                        (gen-reader "resources/test" "taxonomy.xml")
