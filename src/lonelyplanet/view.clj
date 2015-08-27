@@ -6,7 +6,7 @@
 
 (def blank "static/example copy.html")
 
-(defn gen-hierarchy-step
+(defn gen-breadcrumb-step
   "Generate <li> fragments built from destination IDs (supplied as Strings) enclosing <a> elements to their
   corresponding pages. Assumes IDs used as page filenames."
   [step taxonomy]
@@ -41,13 +41,13 @@
              [:div#header :h1] (content (get-in destination [:meta :placename]))
 
              ;; breadcrumb navigation
-             [:div.secondary-navigation :ul] (content (map #(gen-hierarchy-step % taxonomy)
+             [:div.secondary-navigation :ul] (content (map #(gen-breadcrumb-step % taxonomy)
                                                        (get-in destination [:meta :route])))
              [:div.secondary-navigation [:li first-of-type]] (add-class "first")
 
 
              [:div#sidebar :div.inner] (content (html [:ul (map
-                                                             #(gen-hierarchy-step % taxonomy)
+                                                             #(gen-breadcrumb-step % taxonomy)
                                                              (get-in destination [:meta :route]))]))
              [:div#main :div.inner] (content (gen-content destination)))
 

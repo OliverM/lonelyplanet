@@ -2,7 +2,8 @@
   (:require [clojure.test :refer :all]
             [lonelyplanet.view :refer :all]
 
-            [net.cgrand.enlive-html :refer :all]))
+            [net.cgrand.enlive-html :refer :all]
+            [clojure.zip :as z]))
 
 ;(def sa-content (assoc (second (:content (gen-parser (gen-reader "resources/test" "destinations.xml"))))
 ;                  :meta {:placename "South Africa"
@@ -32,12 +33,12 @@
                        355064 {:placename "Africa"}
                        -1 {:placename "World"}}
         ]
-    (testing "Hierarchy steps convert into expected hiccup list item & link"
-      (is (= (gen-hierarchy-step "355064" mock-taxonomy)
+    (testing "Breadcrumb steps convert into expected hiccup list item & link"
+      (is (= (gen-breadcrumb-step "355064" mock-taxonomy)
              '({:tag     :li,
                 :attrs   {},
                 :content ({:tag     :a,
                            :attrs   {:href "355064.html"},
                            :content ("Africa")})})))
-      (is (= (gen-hierarchy-step nil mock-taxonomy)
+      (is (= (gen-breadcrumb-step nil mock-taxonomy)
              nil)))))
