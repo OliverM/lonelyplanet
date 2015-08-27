@@ -54,12 +54,17 @@
   "Given file readers of the taxonomy and the destination xml files, generate a combined structure holding data from
   both, suitable for rendering."
   [taxonomy destinations]
-  (let [dest-metas (-> taxonomy gen-parser z/xml-zip leaves location-metas)
+  (let [tax-zip (-> taxonomy gen-parser z/xml-zip)
+        hierarchy (-> tax-zip z/next z/next (walk&transform-zipper transform-taxonomy-nodes)
+                      z/root z/xml-zip z/next z/next (walk&transform-zipper prune-taxonomy-nodes)
+                      z/root)
+        dest-metas (-> tax-zip leaves location-metas)
         destinations (-> destinations gen-parser :content)]
     {:destinations (for [destination destinations]
                      (let [destination-id (-> destination :attrs :atlas_id)]
                        (assoc destination :meta (dest-metas (Integer. ^String destination-id)))))
-     :dest-metas dest-metas}))
+     :dest-metas dest-metas
+     :hierarchy hierarchy}))
 
 (defn walk&transform-zipper
   "Walk a zipper, mutating with f & walking the returned, mutated version"
