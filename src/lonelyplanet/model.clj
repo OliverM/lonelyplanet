@@ -3,7 +3,7 @@
             [clojure.zip :as z]
             [clojure.data.zip :as dz]
             [clojure.data.zip.xml :as zx]
-
+            [clojure.core.cache :as cache]
             [aprint.core :refer [aprint]]))
 
 (defn gen-parser
@@ -50,6 +50,11 @@
   [taxonomy-locs]
   (into (sorted-map) (map location-meta taxonomy-locs)))
 
+(defn walk-zipper
+  "Walk a zipper & return a lazy seq of nodes, depth first."
+  [loc]
+  (take-while (complement z/end?) (iterate z/next loc)))
+
 (defn walk&transform-zipper
   "Walk a zipper, mutating with f & walking the returned, mutated version"
   [loc f]
@@ -83,6 +88,31 @@
     loc
     (z/remove loc)))
 
+(defn gen-route
+  "Generate a route to the top destination from the current destination"
+  [loc acc]
+  (aprint (str "At node " (-> loc z/node :tag) " " (-> loc z/node :attrs :id)))
+  (let [parent (-> loc z/up z/leftmost)                     ;; grab leftmost parent which is the :li
+        loc-id (-> loc z/node :attrs :id)]
+    (aprint (str "Node parent: " (if parent (str (-> parent z/node :tag) " " (-> parent z/node :attrs :id)) nil)))
+    (if parent (recur parent (cons loc-id acc)) acc)))
+
+(defn gen-meta
+  "Generate destination meta-info for the view"
+  [loc]
+  (let [loc-id (-> loc z/node :attrs :id)
+        loc-name (-> loc z/down z/down z/node)]
+    [(Integer. ^String loc-id) {:route     (gen-route loc [])
+                                :place-id  loc-id
+                                :placename loc-name}]))
+
+(defn gen-routes
+  "Uses the hierarchy of :ul and :li nodes to generate routes to any destination. If multiple children exist, uses first
+  only. Returns a sorted map keyed by destination-id as an Integer."
+  [hierarchy]
+  (let [li-seq (filter #(-> % z/node :tag (= :li)) (-> hierarchy z/xml-zip walk-zipper))]
+    (into (sorted-map) (map gen-meta li-seq))))
+
 (defn generate-destinations
   "Given file readers of the taxonomy and the destination xml files, generate a combined structure holding data from
   both, suitable for rendering."
@@ -91,7 +121,7 @@
         hierarchy (-> tax-zip z/next z/next (walk&transform-zipper transform-taxonomy-nodes)
                       z/root z/xml-zip z/next z/next (walk&transform-zipper prune-taxonomy-nodes)
                       z/root z/xml-zip z/next z/next z/node) ;; navigate to root :ul element
-        dest-metas (-> tax-zip leaves location-metas)
+        dest-metas (-> hierarchy gen-routes)
         destinations (-> destinations gen-parser :content)]
     {:destinations (for [destination destinations]
                      (let [destination-id (-> destination :attrs :atlas_id)]

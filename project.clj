@@ -10,6 +10,7 @@
                  [org.clojure/tools.cli "0.3.2"] ;; command line opt parsing
                  [enlive "1.1.6"] ;; HTML generation
                  [criterium "0.4.3"] ;; benchmarking
+                 [org.clojure/core.cache "0.6.4"]
                  ]
   :main ^:skip-aot lonelyplanet.core
   :target-path "target/%s"
