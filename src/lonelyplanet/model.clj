@@ -62,11 +62,12 @@
   :ul, and add a child :li node containing a :a node with a :href attribute to the destination"
   [loc]
   (let [link-text (-> loc z/children first :content)
-        link (-> loc z/node (get-in [:attrs :geo_id]))
-        link (str link ".html")]
-    (-> (z/edit loc assoc :tag :ul)
-        (z/insert-child (x/map->Element {:tag     :li :attrs {}
-                                         :content [(x/map->Element {:tag :a :attrs {:href link} :content link-text})]})))))
+        link (-> loc z/node (get-in [:attrs :geo_id]))]
+    (-> (z/edit loc assoc :tag :ul :attrs {})
+        (z/insert-child (x/map->Element {:tag     :li :attrs {:id link}
+                                         :content [(x/map->Element {:tag :a
+                                                                    :attrs {:href (str link ".html")}
+                                                                    :content link-text})]})))))
 
 (defn transform-taxonomy-nodes
   "Transform a taxonomy zipper from the xml tag-based structure to an enlive-html tag-based structure suitable
