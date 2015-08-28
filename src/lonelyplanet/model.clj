@@ -65,7 +65,7 @@
         link (-> loc z/node (get-in [:attrs :geo_id]))
         link (str link ".html")]
     (-> (z/edit loc assoc :tag :ul)
-        (z/append-child (x/map->Element {:tag     :li :attrs {}
+        (z/insert-child (x/map->Element {:tag     :li :attrs {}
                                          :content [(x/map->Element {:tag :a :attrs {:href link} :content link-text})]})))))
 
 (defn transform-taxonomy-nodes

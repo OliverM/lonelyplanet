@@ -55,16 +55,17 @@
       (is (= (-> (z/xml-zip test-node)
                  (walk&transform-zipper transform-taxonomy-nodes)
                  z/node)
-             #clojure.data.xml.Element{:tag     :ul,
-                                       :attrs   {:atlas_node_id "355613", :ethyl_content_object_id "", :geo_id "355613"},
-                                       :content [#clojure.data.xml.Element{:tag     :node_name,
-                                                                           :attrs   {},
-                                                                           :content ("Table Mountain National Park")}
-                                                 #clojure.data.xml.Element{:tag     :li,
-                                                                           :attrs   {},
-                                                                           :content [#clojure.data.xml.Element{:tag     :a,
-                                                                                                               :attrs   {:href "355613.html"},
-                                                                                                               :content ("Table Mountain National Park")}]}]})))
+             #clojure.data.xml.Element{:tag :ul,
+                                       :attrs {:atlas_node_id "355613", :ethyl_content_object_id "", :geo_id "355613"},
+                                       :content [#clojure.data.xml.Element{:tag :li,
+                                                                           :attrs {},
+                                                                           :content [#clojure.data.xml.Element{:tag :a,
+                                                                                                               :attrs {:href "355613.html"},
+                                                                                                               :content ("Table Mountain National Park")}]}
+                                                 #clojure.data.xml.Element{:tag :node_name,
+                                                                           :attrs {},
+                                                                           :content ("Table Mountain National Park")}]}
+             )))
     (testing "Transforming then pruning sample taxomony node gives expected structure"
       (is (= (-> (z/xml-zip test-node)
                  (walk&transform-zipper transform-taxonomy-nodes)
