@@ -2,7 +2,6 @@
   (:require [clojure.tools.cli :as cli]
             [clojure.string :as s]
             [clojure.java.io :as io]
-
             [lonelyplanet.model :as m]
             [lonelyplanet.view :as v]
             )
@@ -70,6 +69,12 @@
                      ]
            (let [output (second arguments)]
              (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
-             (exit 0 (str "Files processed & saved to " output))))
-         (catch Exception e (exit 1 (str "Exception: " (.getMessage e))))
-         )))
+             ;(exit 0
+                   (str "Files processed & saved to " output)
+                   ;)
+             ))
+         (catch Exception e
+           ;(exit 1
+                 (str "Exception: " (.getMessage e))
+                 ;)
+           ))))

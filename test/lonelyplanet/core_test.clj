@@ -1,9 +1,7 @@
 (ns lonelyplanet.core-test
   (:require [clojure.test :refer :all]
             [lonelyplanet.core :refer :all]
-
             [clojure.tools.cli :as cli]
-            [clojure.string :as s]
             [criterium.core :as c]
             [aprint.core :refer (aprint)]
             [lonelyplanet.model :as m]
