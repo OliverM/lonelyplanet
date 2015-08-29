@@ -63,18 +63,6 @@
     (recur (z/next (f loc)) f)))
 
 (defn to-html-list
-  "Convert a taxonomy node loc to a html list. When it encounters a :node element, change the :tag of the element to
-  :ul, and add a child :li node containing a :a node with a :href attribute to the destination"
-  [loc]
-  (let [link-text (-> loc z/children first :content)
-        link (-> loc z/node (get-in [:attrs :geo_id]))]
-    (-> (z/edit loc assoc :tag :ul :attrs {})
-        (z/insert-child (x/map->Element {:tag     :li :attrs {:id link}
-                                         :content [(x/map->Element {:tag :a
-                                                                    :attrs {:href (str link ".html")}
-                                                                    :content link-text})]})))))
-
-(defn to-html-list-2
   [loc]
   (let [link-text (-> loc z/children first :content)
         link (-> loc z/node (get-in [:attrs :geo_id]))
@@ -91,7 +79,7 @@
   "Transform a taxonomy zipper from the xml tag-based structure to an enlive-html tag-based structure suitable
   for rendering to HTML by enlive. Assumes it's operating from a root node tag, not the root <taxonomies> tag."
   [loc]
-  (if (= (-> loc z/node :tag) :node) (to-html-list-2 loc) loc))
+  (if (= (-> loc z/node :tag) :node) (to-html-list loc) loc))
 
 (defn prune-taxonomy-nodes
   "Remove nodes not in the set of :ul, :li or :a element types, or is a string."

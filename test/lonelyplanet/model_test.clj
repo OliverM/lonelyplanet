@@ -59,12 +59,12 @@
                                        :attrs {},
                                        :content [#clojure.data.xml.Element{:tag :li,
                                                                            :attrs {:id "355613"},
-                                                                           :content [#clojure.data.xml.Element{:tag :a,
+                                                                           :content (#clojure.data.xml.Element{:tag :a,
                                                                                                                :attrs {:href "355613.html"},
-                                                                                                               :content ("Table Mountain National Park")}]}
-                                                 #clojure.data.xml.Element{:tag :node_name,
-                                                                           :attrs {},
-                                                                           :content ("Table Mountain National Park")}]})))
+                                                                                                               :content ("Table Mountain National Park")}
+                                                                                      #clojure.data.xml.Element{:tag :node_name,
+                                                                                                                :attrs {},
+                                                                                                                :content ("Table Mountain National Park")})}]})))
     (testing "Transforming then pruning sample taxomony node gives expected structure"
       (is (= (-> (z/xml-zip test-node)
                  (walk&transform-zipper transform-taxonomy-nodes)
