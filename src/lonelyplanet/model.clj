@@ -89,21 +89,30 @@
     loc
     (z/remove loc)))
 
-(defn gen-route
+(defn gen-route-parent
   "Generate a route to the top destination from the current destination"
   [loc acc]
-  (aprint (str "At node " (-> loc z/node :tag) " " (-> loc z/node :attrs :id)))
   (let [parent (-> loc z/up z/up)
         loc-id (-> loc z/node :attrs :id)]
-    (aprint (str "Node parent: " (if parent (str (-> parent z/node :tag) " " (-> parent z/node :attrs :id)) nil)))
     (if parent (recur parent (cons loc-id acc)) (cons loc-id acc))))
+
+(defn gen-route-child
+  "Generate a route to the bottom destination from the current destination, taking the left-most child if any"
+  [loc acc]
+  (let [loc-id (-> loc z/node :attrs :id)
+        child-test (-> loc z/down z/right)]
+    (if child-test (recur (z/down child-test) (cons loc-id acc)) (cons loc-id acc))))
+
+(defn gen-route [loc]
+  "Merge the parent route and the child route"
+  (concat (gen-route-parent loc []) (rest (reverse (gen-route-child loc [])))))
 
 (defn gen-meta
   "Generate destination meta-info for the view"
   [loc]
   (let [loc-id (-> loc z/node :attrs :id)
         loc-name (-> loc z/down z/down z/node)]
-    [(Integer. ^String loc-id) {:route     (gen-route loc [])
+    [(Integer. ^String loc-id) {:route     (gen-route loc)
                                 :place-id  loc-id
                                 :placename loc-name}]))
 
