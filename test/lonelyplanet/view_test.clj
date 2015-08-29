@@ -1,15 +1,7 @@
 (ns lonelyplanet.view-test
   (:require [clojure.test :refer :all]
             [lonelyplanet.view :refer :all]
-
-            [net.cgrand.enlive-html :refer :all]
-            [clojure.zip :as z]))
-
-;(def sa-content (assoc (second (:content (gen-parser (gen-reader "resources/test" "destinations.xml"))))
-;                  :meta {:placename "South Africa"
-;                         :place-id "355611"
-;                         :route '("355611" "355064" nil nil)}))
-
+            [net.cgrand.enlive-html :refer :all]))
 
 (defn lv
   "Quick utility function to create html pages from destination data, saving
