@@ -2,35 +2,32 @@
   (:require [clojure.test :refer :all]
             [lonelyplanet.model :refer :all]
             [lonelyplanet.core :refer [gen-reader]]
-
             [clojure.zip :as z]
-            [clojure.data.xml :as x]
-            [clojure.data.zip :as dz]
             [clojure.data.zip.xml :as zx]
 
             [aprint.core :refer [aprint]]))
 
+(defn leaves
+  "Transform tree zipper to sequence of leaf locations. Useful utility fn for testing."
+  [loc]
+  (filter (complement z/branch?) (take-while (complement z/end?) (iterate z/next loc))))
+
 (deftest parse-taxonomy
-  (let [test-zip (-> (gen-reader "resources/test" "taxonomy.xml")
+  (let [tax-zip (-> (gen-reader "resources/test" "taxonomy.xml")
                      gen-parser
                      z/xml-zip)
-        leaves (leaves test-zip)
-        sa (location-meta (nth leaves 2))
-        destination-metas (location-metas leaves)
+        hrrchy (-> tax-zip z/next z/next (walk&transform-zipper transform-taxonomy-nodes)
+                      z/root z/xml-zip z/next z/next (walk&transform-zipper prune-taxonomy-nodes)
+                      z/root z/xml-zip z/next z/next z/node) ;; navigate to root :ul element
+        dest-metas (-> hrrchy gen-routes)
+        sa (dest-metas 355611)
         ]
-    (testing "Leaf nodes count matches no. of leaf nodes in test taxonomy"
-      (is (= (count leaves) 25)))
-    (testing "Leaf nodes are nil or strings"
-      (is (= (let [leaf (z/node (rand-nth leaves))]
-               (or (string? leaf) (nil? leaf)))
-             true)))
+    (testing "Destination meta info nodes count matches no. of destinations in test taxonomy"
+      (is (= (count dest-metas) 24)))
     (testing "Parsing location information"
-      (is (= 355611 (first sa)))
-      (is (= (:placename (second sa)) "South Africa"))
-      (is (= (:place-id (second sa)) "355611"))
-      (is (= (:route (second sa)) '("355611" "355064" nil nil))))
-    (testing "Destination metadata lookup structure returns expected location metadata"
-      (is (= (destination-metas 355611) (second sa))))))
+      (is (= (:placename sa) "South Africa"))
+      (is (= (:place-id sa) "355611"))
+      (is (= (:route sa) '("355064" "355611" "355612" "355613"))))))
 
 (deftest transform-taxonomy
   (let [test-zip (-> (gen-reader "resources/test" "taxonomy.xml")
