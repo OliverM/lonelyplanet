@@ -60,11 +60,11 @@
   [loc acc]
   (let [loc-id (-> loc z/node :attrs :id)
         child-test (-> loc z/down z/right)]
-    (if child-test (recur (z/down child-test) (cons loc-id acc)) (cons loc-id acc))))
+    (if child-test (recur (z/down child-test) (conj acc loc-id)) (conj acc loc-id ))))
 
 (defn gen-route [loc]
   "Merge the parent route and the child route"
-  (concat (gen-route-parent loc []) (rest (reverse (gen-route-child loc [])))))
+  (concat (gen-route-parent loc []) (rest (gen-route-child loc []))))
 
 (defn gen-meta
   "Generate destination meta-info for the view"
