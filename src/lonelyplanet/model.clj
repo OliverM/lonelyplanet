@@ -93,10 +93,10 @@
   "Generate a route to the top destination from the current destination"
   [loc acc]
   (aprint (str "At node " (-> loc z/node :tag) " " (-> loc z/node :attrs :id)))
-  (let [parent (-> loc z/up z/leftmost)                     ;; grab leftmost parent which is the :li
+  (let [parent (-> loc z/up z/up)
         loc-id (-> loc z/node :attrs :id)]
     (aprint (str "Node parent: " (if parent (str (-> parent z/node :tag) " " (-> parent z/node :attrs :id)) nil)))
-    (if parent (recur parent (cons loc-id acc)) acc)))
+    (if parent (recur parent (cons loc-id acc)) (cons loc-id acc))))
 
 (defn gen-meta
   "Generate destination meta-info for the view"
@@ -122,7 +122,7 @@
         hierarchy (-> tax-zip z/next z/next (walk&transform-zipper transform-taxonomy-nodes)
                       z/root z/xml-zip z/next z/next (walk&transform-zipper prune-taxonomy-nodes)
                       z/root z/xml-zip z/next z/next z/node) ;; navigate to root :ul element
-        dest-metas (-> tax-zip leaves location-metas)
+        dest-metas (-> hierarchy gen-routes)
         destinations (-> destinations gen-parser :content)]
     {:destinations (for [destination destinations]
                      (let [destination-id (-> destination :attrs :atlas_id)]
