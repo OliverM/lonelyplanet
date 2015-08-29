@@ -74,11 +74,24 @@
                                                                     :attrs {:href (str link ".html")}
                                                                     :content link-text})]})))))
 
+(defn to-html-list-2
+  [loc]
+  (let [link-text (-> loc z/children first :content)
+        link (-> loc z/node (get-in [:attrs :geo_id]))
+        children (-> loc z/children)]
+    (-> (z/edit loc assoc :tag :ul :attrs {})
+        (z/edit assoc :content [])
+        (z/insert-child (x/map->Element {:tag     :li :attrs {:id link}
+                                         :content (concat [(x/map->Element {:tag     :a
+                                                                            :attrs   {:href (str link ".html")}
+                                                                            :content link-text})]
+                                                          children)})))))
+
 (defn transform-taxonomy-nodes
   "Transform a taxonomy zipper from the xml tag-based structure to an enlive-html tag-based structure suitable
   for rendering to HTML by enlive. Assumes it's operating from a root node tag, not the root <taxonomies> tag."
   [loc]
-  (if (= (-> loc z/node :tag) :node) (to-html-list loc) loc))
+  (if (= (-> loc z/node :tag) :node) (to-html-list-2 loc) loc))
 
 (defn prune-taxonomy-nodes
   "Remove nodes not in the set of :ul, :li or :a element types, or is a string."
@@ -121,7 +134,7 @@
         hierarchy (-> tax-zip z/next z/next (walk&transform-zipper transform-taxonomy-nodes)
                       z/root z/xml-zip z/next z/next (walk&transform-zipper prune-taxonomy-nodes)
                       z/root z/xml-zip z/next z/next z/node) ;; navigate to root :ul element
-        dest-metas (-> hierarchy gen-routes)
+        dest-metas (-> tax-zip leaves location-metas)
         destinations (-> destinations gen-parser :content)]
     {:destinations (for [destination destinations]
                      (let [destination-id (-> destination :attrs :atlas_id)]
