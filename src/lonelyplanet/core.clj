@@ -70,12 +70,6 @@
                      ]
            (let [output (second arguments)]
              (process-files {:taxonomy taxonomy :destinations destinations :output-dir output})
-             ;(exit 0
-                   (str "Files processed & saved to " output)
-                   ;)
-             ))
+             (exit 0 (str "Files processed & saved to " output))))
          (catch Exception e
-           ;(exit 1
-                 (str "Exception: " (.getMessage e))
-                 ;)
-           ))))
+           (exit 1 (str "Exception: " (.getMessage e)))))))
