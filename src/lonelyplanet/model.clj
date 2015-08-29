@@ -64,7 +64,7 @@
 
 (defn gen-route [loc]
   "Merge the parent route and the child route"
-  (concat (gen-route-parent loc []) (rest (gen-route-child loc []))))
+  (concat (gen-route-parent loc '()) (rest (gen-route-child loc []))))
 
 (defn gen-meta
   "Generate destination meta-info for the view"
