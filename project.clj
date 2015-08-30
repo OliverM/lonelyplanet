@@ -11,7 +11,8 @@
                  [enlive "1.1.6"] ;; HTML generation
                  [criterium "0.4.3"] ;; benchmarking
                  ]
-  :plugins [[lein-bin "0.3.5"]]
+  :plugins [[lein-bin "0.3.5"]
+            [lein-marginalia "0.8.0"]]
   :bin {:name "lonely"}
   :main ^:skip-aot lonelyplanet.core
   :target-path "target/%s"
