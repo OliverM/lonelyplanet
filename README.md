@@ -5,8 +5,8 @@ An implementation of the Lonely Planet August 2014 coding test in Clojure.
 ## Installation
 
 This Clojure project runs on the JVM, so a recent Java installation is required. Visit [java.com/download](https://java.com/en/download/) 
-to install one if there's not one installed. Then [download the compiled binary](https://github.com/OliverM/lonelyplanet/blob/master/bin/lonely), 
-called `lonely` into the directory of your choice.
+to install one if there's not one installed. Then [download the compiled binary](https://github.com/OliverM/lonelyplanet/releases/download/1.0/lonely) 
+(called `lonely`), into the directory of your choice.
 
 Compiling the binary or running the tests is best done under Leiningen (Clojure's default project management tool). 
 If Leiningen isn't installed, install it via [the instructions at leiningen.org](http://leiningen.org/). Then clone the
@@ -14,7 +14,7 @@ repository into a directory of your choice.
 
 ## Usage
 
-To run the [compiled binary](https://github.com/OliverM/lonelyplanet/blob/master/bin/lonely) (once Java is installed), 
+To run the [compiled binary](https://github.com/OliverM/lonelyplanet/releases/download/1.0/lonely) (once Java is installed), 
 at the command line type: 
 
     lonely input-directory output-directory [options]
