@@ -1,7 +1,6 @@
 (ns lonelyplanet.model
   (:require [clojure.data.xml :as x]
             [clojure.zip :as z]
-            [clojure.core.cache :as cache]
             [aprint.core :refer [aprint]]))
 
 (defn gen-parser

@@ -44,7 +44,7 @@ which should give you:
 
 Standard invocation supplying an input directory named input-dir and an output directory named outputdir:
 
-    lonely inputdir outputdir`
+    lonely inputdir outputdir
 
 The above assumes the taxonomy file is named taxonomy.xml, and the destinations file is named destinations.xml.
 
