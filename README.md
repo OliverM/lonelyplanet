@@ -1,30 +1,47 @@
 # lonelyplanet
 
-An implementation of the Lonely Planet August 2014 coding test in Clojure
+An implementation of the Lonely Planet August 2014 coding test in Clojure.
 
 ## Installation
 
-To run the compiled binary:
+This implementation uses Clojure, a language that runs on the JVM, the CLR, or on node.js. This particular project 
+runs on the JVM, so a recent Java installation is required. Visit [java.com/download](https://java.com/en/download/) 
+to install one if there's not one installed. Then download the compiled program into the directory of your choice. 
+Download the command line binary from http://example.com/FIXME.
 
-To run under Leiningen (Clojure's default project management tool):
-
-If Leiningen isn't installed, install it via [the instructions at leiningen.org](http://leiningen.org/).
-
-Download from http://example.com/FIXME.
+Compiling the binary or running the tests is best done under Leiningen (Clojure's default project management tool). 
+If Leiningen isn't installed, install it via [the instructions at leiningen.org](http://leiningen.org/). Then clone the
+repository into a directory of your choice. 
 
 ## Usage
 
-FIXME: explanation
+To run the compiled binary (once Java is installed), at the command line type: 
+
+    lonely input-directory output-directory [options]
+
+The input directory should contain two files, named taxonomy.xml and destinations.xml.
+These filenames can be overriden using the options below.
+Options show switches (short then long), defaults, and option effects.
+
+  -h, --help                                     Show this help message.
+  -t, --taxonomy FILENAME      taxonomy.xml      Supply an alternate filename for the taxonomy.xml file.
+  -d, --destinations FILENAME  destinations.xml  Supply an alternate filename for the destinations.xml file.
 
     $ java -jar lonelyplanet-0.1.0-standalone.jar [args]
 
-## Options
-
-FIXME: listing of options this app accepts.
+To run the tests (once Leiningen is installed), in that directory type:
 
 ## Examples
 
-...
+Standard invocation supplying an input directory named input-dir and an output directory named outputdir:
+
+    lonely inputdir outputdir`
+
+The above assumes the taxonomy file is named taxonomy.xml, and the destinations file is named destinations.xml.
+
+The following will look in the input directory for a taxonomy file named tax.xml and a destinations file named dest.xml:
+
+    lonely input-dir output-dir --taxonomy tax.xml --destinations --dest.xml
 
 ## Bugs/Issues
 
@@ -38,6 +55,10 @@ tag is 'taxonomies'...). That taxonomy is called 'World', though, so I'm assumin
 
 Finally the breadcrumb navigation along the top of the article is limited to first children when showing routes, not 
 all children; all children are visible in the navigation to the right (but suffer from the CSS alignment issue, above).
+
+## Performance
+On a 2.4Ghz 2007-vintage Core Duo with 4GB and an SSD, mean execution of the program against the sample files takes 80ms 
+(see commit history for more info). This excludes JVM startup time.
 
 ## License
 

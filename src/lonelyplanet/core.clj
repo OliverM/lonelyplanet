@@ -18,7 +18,7 @@
   [options-summary]
   (s/join
     \newline
-    ["Lonely Planet August 2014 coding test by Oliver Mooney (August 17th 2015)"
+    ["Lonely Planet August 2014 coding test by Oliver Mooney (August 2015)"
      "Usage: lonely [options] input-directory output-directory"
      "The input directory should contain two files, named taxonomy.xml and destinations.xml."
      "These filenames can be overriden using the options below."

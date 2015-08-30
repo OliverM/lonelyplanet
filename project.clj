@@ -12,6 +12,8 @@
                  [criterium "0.4.3"] ;; benchmarking
                  [org.clojure/core.cache "0.6.4"]
                  ]
+  :plugins [[lein-bin "0.3.5"]]
+  :bin {:name "lonely"}
   :main ^:skip-aot lonelyplanet.core
   :target-path "target/%s"
   :profiles {:uberjar {:aot :all}})
