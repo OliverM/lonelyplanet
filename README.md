@@ -40,6 +40,10 @@ which should give you:
     Ran 9 tests containing 24 assertions.
     0 failures, 0 errors.
 
+To generate the app from the source, at the command prompt in the project directory type: `lein bin`
+
+Alternatively, to generate an uberjar, do the usual `lein uberjar` 
+
 ## Examples
 
 Standard invocation supplying an input directory named input-dir and an output directory named outputdir:
@@ -70,6 +74,9 @@ all children; all children are visible in the navigation to the right (but suffe
 ## Performance
 On a 2.4Ghz 2007-vintage Core Duo with 4GB and an SSD, mean execution of the program against the sample files takes 80ms 
 (see commit history for more info). This excludes JVM startup time.
+
+## Source code commentary
+I've used [Marginalia](https://github.com/gdeer81/marginalia), a Clojure documentation tool, to generate descriptive docs from the source code comments. You [can see the commentary here](https://rawgit.com/OliverM/lonelyplanet/master/doc/uberdoc.html).
 
 ## License
 
