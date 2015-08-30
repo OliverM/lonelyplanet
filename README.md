@@ -4,10 +4,9 @@ An implementation of the Lonely Planet August 2014 coding test in Clojure.
 
 ## Installation
 
-This implementation uses Clojure, a language that runs on the JVM, the CLR, or on node.js. This particular project 
-runs on the JVM, so a recent Java installation is required. Visit [java.com/download](https://java.com/en/download/) 
-to install one if there's not one installed. Then download the compiled program into the directory of your choice. 
-Download the command line binary from http://example.com/FIXME.
+This Clojure project runs on the JVM, so a recent Java installation is required. Visit [java.com/download](https://java.com/en/download/) 
+to install one if there's not one installed. Then [download the compiled binary](https://github.com/OliverM/lonelyplanet/blob/master/bin/lonely), 
+called `lonely` into the directory of your choice.
 
 Compiling the binary or running the tests is best done under Leiningen (Clojure's default project management tool). 
 If Leiningen isn't installed, install it via [the instructions at leiningen.org](http://leiningen.org/). Then clone the
@@ -15,7 +14,8 @@ repository into a directory of your choice.
 
 ## Usage
 
-To run the compiled binary (once Java is installed), at the command line type: 
+To run the [compiled binary](https://github.com/OliverM/lonelyplanet/blob/master/bin/lonely) (once Java is installed), 
+at the command line type: 
 
     lonely input-directory output-directory [options]
 
@@ -23,13 +23,22 @@ The input directory should contain two files, named taxonomy.xml and destination
 These filenames can be overriden using the options below.
 Options show switches (short then long), defaults, and option effects.
 
-  -h, --help                                     Show this help message.
-  -t, --taxonomy FILENAME      taxonomy.xml      Supply an alternate filename for the taxonomy.xml file.
-  -d, --destinations FILENAME  destinations.xml  Supply an alternate filename for the destinations.xml file.
+    -h, --help                                     Show this help message.
+    -t, --taxonomy FILENAME      taxonomy.xml      Supply an alternate filename for the taxonomy.xml file.
+    -d, --destinations FILENAME  destinations.xml  Supply an alternate filename for the destinations.xml file.
 
-    $ java -jar lonelyplanet-0.1.0-standalone.jar [args]
+To run the tests (once Leiningen is installed, and the repo cloned to a local directory), in the project directory type:
 
-To run the tests (once Leiningen is installed), in that directory type:
+    lein test
+
+which should give you:
+
+    lein test lonelyplanet.core-test
+    lein test lonelyplanet.model-test
+    lein test lonelyplanet.view-test
+
+    Ran 9 tests containing 24 assertions.
+    0 failures, 0 errors.
 
 ## Examples
 
@@ -43,7 +52,9 @@ The following will look in the input directory for a taxonomy file named tax.xml
 
     lonely input-dir output-dir --taxonomy tax.xml --destinations --dest.xml
 
-## Bugs/Issues
+## Notes/Bugs/Issues
+
+The program assumes the CSS is located at static/all.css (relative to the output directory) as per the sample files.
 
 If the project remit was a bit wider and included custom CSS, I'd adjust it to better display the destinations list. 
 Currently All destinations are listed vertically under each other. Without the current stylesheet (e.g. using the 
