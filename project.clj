@@ -1,6 +1,9 @@
 (defproject lonelyplanet "0.1.0-SNAPSHOT"
-  :description "FIXME: write description"
-  :url "http://example.com/FIXME"
+  :description
+  "An implementation of the Lonely Planet August 2014 XML coding test
+
+  By Oliver Mooney"
+  :url "https://github.com/OliverM/lonelyplanet"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.7.0"]

@@ -1,3 +1,6 @@
+/.gitignore
+/.idea
+/lonelyplanet.iml
 /target
 /classes
 /checkouts
